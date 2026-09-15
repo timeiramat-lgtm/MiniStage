@@ -1,0 +1,58 @@
+php 8.0
+
+1. Sudo apt install docker.io
+2. Sudo docker pull mysql:8.0.34
+3. sudo docker run -it \
+  --name mysqlServer \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=db_ministage \
+  -e MYSQL_USER=Admin \
+  -e MYSQL_PASSWORD=admin \
+  -v /home/eperron/DockerImage:/var/lib/mysql \
+  -p 3306:3306 \
+   mysql:8.0.34
+
+4. sudo docker exec -it mysqlServer mysql -uAdmin -padmin db_ministage < /XXX/creationDB.sql
+optionnel : se connecter en root et grant all privileges
+	sudo docker exec -it mysqlServer mysql  -uroot -proot
+	GRANT ALL PRIVILEGES ON db_ministage.* TO Admin WITH GRANT OPTION;
+	flush privileges;
+
+5. pour se connecter : sudo docker exec -it mysqlServer mysql -uAdmin -padmin
+5.5. si pas en cours d'exec : sudo docker start mysqlServer
+
+pour dbeaver:
+	host 0.0.0.0 port 3306
+	Admin
+	admin
+	
+	propriétés du pilote -> allowPublicKeyRetrieval true
+
+- création de donnée random : 
+	docker cp /XXX/data.sql mysqlServer:/tmp/data.sql
+	sudo docker exec -it mysqlServer mysql -uAdmin -padmin
+	use db_ministage
+	source /tmp/data.sql;
+	Les utilisateurs 1 et 2 ont les mdps de mdp_hash
+
+- mdp_hash :
+	Génère 2 hash (modifiable en modifiant le script)
+	mdp de base : Mdp1234_ + Admin_12
+
+pour tout supprimer :
+	SET FOREIGN_KEY_CHECKS=0;
+	truncate logactionutilisateur;
+	truncate t_academie;
+	truncate t_etablissement;
+	truncate t_fonction;
+	truncate t_formation;
+	truncate t_formationfavorite;
+	truncate t_ministage;
+	truncate t_profil
+	truncate t_reservation;
+	truncate t_typeetab;
+	truncate t_typeformation;
+	truncate t_utilisateur;
+	SET FOREIGN_KEY_CHECKS=1;
+	
+	
